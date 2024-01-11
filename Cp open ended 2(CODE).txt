@@ -1,0 +1,97 @@
+#include <iostream>
+#include <string>
+
+
+using namespace std;
+
+// Book structure
+struct Book {
+    string Title;
+    string Author;
+    int publication_Year;
+    string genre;
+};
+
+ //input for six books
+void bookdetails(Book books[], int size) {
+    for (int i = 0; i < size; ++i) {
+        cout << "Enter details for Book " << i+1 << "\nTitle: ";
+        getline(cin, books[i].Title);
+        cout << "Author: ";
+        getline(cin, books[i].Author);
+        cout << "Publication Year: ";
+        cin >> books[i].publication_Year;
+        cin.ignore();  
+        cout << "Genre: ";
+        getline(cin, books[i].genre);
+        cout << "\n";
+    }
+}
+
+// Function to categorize 
+void categorize(const Book books[], int size, Book fiction[], Book nonFiction[], int& fictionCount, int& nonFictionCount) {
+    fictionCount = 0;
+    nonFictionCount = 0;
+
+    for (int i = 0; i < size; ++i) {
+        if (books[i].genre == "Fiction") {
+            fiction[fictionCount++] = books[i];
+        } else {
+            nonFiction[nonFictionCount++] = books[i];
+        }
+    }
+}
+
+// Function to sort the books according to publication year 
+void EarliestBooks(const Book books[], int size, Book& earliestFiction, Book& earliestNonFiction) {
+    earliestFiction = books[0];
+    earliestNonFiction = books[0];
+
+    for (int i = 1; i < size; ++i) {
+        if (books[i].genre == "fiction" && books[i].publication_Year < earliestFiction.publication_Year) {
+            earliestFiction = books[i];
+        } else if (books[i].genre == "Nonfiction" && books[i].publication_Year < earliestNonFiction.publication_Year) {
+            earliestNonFiction = books[i];
+        }
+    }
+}
+
+// Function for displaying book details....
+void displayBooks(const Book books[], int size, const string& category, const Book& earliestBook) {
+    cout << "Books in " << category << " category:\n";
+    for (int i = 0; i < size; ++i) {
+        cout << "Title: " << books[i].Title << "\n";
+        cout << "Author: " << books[i].Author << "\n";
+        cout << "Publication Year: " << books[i].publication_Year << "\n";
+        cout << "Genre: " << books[i].genre << "\n";
+        cout << "-----------------------\n";
+    }
+
+    cout << "Earliest Published Book in " << category << " category:\n";
+    cout << "Title: " << earliestBook.Title << "\n";
+    cout << "Author: " << earliestBook.Author << "\n";
+    cout << "Publication Year: " << earliestBook.publication_Year << "\n";
+    cout << "Genre: " << earliestBook.genre << "\n\n";
+}
+
+int main() {
+    const int bookCount = 6;
+    Book books[bookCount];
+    Book fiction[bookCount], nonFiction[bookCount];
+    int fictionCount, nonFictionCount;
+    Book earliestFiction, earliestNonFiction;
+
+    bookdetails(books, bookCount);
+
+    // Categorize books into fiction and non-fiction
+    categorize(books, bookCount, fiction, nonFiction, fictionCount, nonFictionCount);
+
+    // Find the book with the earliest publication year in each category
+    EarliestBooks(fiction, fictionCount, earliestFiction, earliestNonFiction);
+
+    // Display book details
+    displayBooks(fiction, fictionCount, "fiction", earliestFiction);
+    displayBooks(nonFiction, nonFictionCount, "Non-Fiction", earliestNonFiction);
+
+    return 0;
+}
